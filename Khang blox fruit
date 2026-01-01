@@ -1,0 +1,64 @@
+--// 📌 BLOX FRUITS MINI GUI – BY KHANG
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0,220,0,160)
+Frame.Position = UDim2.new(0.05,0,0.3,0)
+Frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Frame.Active = true; Frame.Draggable = true
+
+local title = Instance.new("TextLabel", Frame)
+title.Size = UDim2.new(1,0,0,30)
+title.BackgroundColor3 = Color3.fromRGB(0,170,255)
+title.Text = "Khang – Blox Fruits Menu"
+title.TextColor3 = Color3.fromRGB(255,255,255)
+
+-- Auto Farm Toggle
+local auto = false
+local btn = Instance.new("TextButton", Frame)
+btn.Size = UDim2.new(1,-20,0,35)
+btn.Position = UDim2.new(0,10,0,40)
+btn.BackgroundColor3 = Color3.fromRGB(0,255,0)
+btn.Text = "Auto Farm: OFF"
+
+btn.MouseButton1Click:Connect(function()
+    auto = not auto
+    btn.Text = auto and "Auto Farm: ON" or "Auto Farm: OFF"
+    btn.BackgroundColor3 = auto and Color3.fromRGB(255,80,80) or Color3.fromRGB(0,255,0)
+
+    while auto do
+        task.wait(0.2)
+        local plr = game.Players.LocalPlayer
+        local char = plr.Character
+        local hum = char and char:FindFirstChild("HumanoidRootPart")
+        local mob = workspace:FindFirstChild("Bandit [Lv. 5]") -- đổi tên mob
+        if mob and hum then
+            hum.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0,3,3)
+            pcall(function() mob.Humanoid.Health = 0 end)
+        end
+    end
+end)
+
+-- Teleport to Jungle
+local tp = Instance.new("TextButton", Frame)
+tp.Size = UDim2.new(1,-20,0,35)
+tp.Position = UDim2.new(0,10,0,80)
+tp.BackgroundColor3 = Color3.fromRGB(255,170,0)
+tp.Text = "Teleport Jungle"
+
+tp.MouseButton1Click:Connect(function()
+    local hrp = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-1600, 150, 144) end
+end)
+
+-- Speed Boost
+local sp = Instance.new("TextButton", Frame)
+sp.Size = UDim2.new(1,-20,0,35)
+sp.Position = UDim2.new(0,10,0,120)
+sp.BackgroundColor3 = Color3.fromRGB(0,120,255)
+sp.Text = "Set WalkSpeed 120"
+
+sp.MouseButton1Click:Connect(function()
+    local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+    if hum then hum.WalkSpeed = 120 end
+end)
