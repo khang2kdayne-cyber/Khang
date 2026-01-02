@@ -1,0 +1,33 @@
+--// Khang Circular Menu - Air Walk (Walk On Air) --// LocalScript | Paste vào executor
+
+local Players = game:GetService("Players") local UIS = game:GetService("UserInputService") local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+-- ================= GUI ================= local ScreenGui = Instance.new("ScreenGui") ScreenGui.Name = "KhangCircleMenu" ScreenGui.Parent = game.CoreGui
+
+local Main = Instance.new("Frame", ScreenGui) Main.Size = UDim2.new(0, 80, 0, 80) Main.Position = UDim2.new(0.1, 0, 0.4, 0) Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30) Main.Active = true Main.Draggable = true
+
+local UICorner = Instance.new("UICorner", Main) UICorner.CornerRadius = UDim.new(1, 0)
+
+local ToggleBtn = Instance.new("TextButton", Main) ToggleBtn.Size = UDim2.new(1, 0, 1, 0) ToggleBtn.BackgroundTransparency = 1 ToggleBtn.Text = "AIR" ToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 150) ToggleBtn.Font = Enum.Font.GothamBold ToggleBtn.TextScaled = true
+
+-- ================= AIR WALK ================= local airWalk = false local airPart
+
+local function createAirPart() airPart = Instance.new("Part") airPart.Size = Vector3.new(6, 1, 6) airPart.Transparency = 1 airPart.Anchored = true airPart.CanCollide = true airPart.Name = "KhangAirWalk" airPart.Parent = workspace end
+
+ToggleBtn.MouseButton1Click:Connect(function() airWalk = not airWalk ToggleBtn.TextColor3 = airWalk and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 80, 80)
+
+if airWalk then
+    if not airPart then createAirPart() end
+else
+    if airPart then airPart:Destroy() airPart = nil end
+end
+
+end)
+
+RunService.RenderStepped:Connect(function() if airWalk and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then local hrp = player.Character.HumanoidRootPart if airPart then airPart.Position = Vector3.new(hrp.Position.X, hrp.Position.Y - 3.5, hrp.Position.Z) end end end)
+
+-- ================= ANTI RESET ================= player.CharacterAdded:Connect(function() if airPart then airPart:Destroy() airPart = nil end airWalk = false ToggleBtn.TextColor3 = Color3.fromRGB(255, 80, 80) end)
+
+--// End Script
