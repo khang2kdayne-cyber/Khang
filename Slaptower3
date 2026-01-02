@@ -1,0 +1,121 @@
+-- SLAP TOWER 3 - AUTO TELEPORT COLLECT SLAP (FULL FIX)
+-- By ChatGPT for Khang
+
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+
+local collecting = false
+local savedCFrame
+local collected = {}
+
+-- Lấy HRP an toàn
+local function getHRP()
+    local char = lp.Character or lp.CharacterAdded:Wait()
+    return char:WaitForChild("HumanoidRootPart")
+end
+
+-- 🔥 TÌM PART CÓ TOUCHINTEREST
+local function getTouchPart(model)
+    for _,v in ipairs(model:GetDescendants()) do
+        if v:IsA("BasePart") and v:FindFirstChild("TouchInterest") then
+            return v
+        end
+    end
+    return nil
+end
+
+-- ❌ KIỂM TRA SLAP CẦN MUA
+local function isPaidSlap(model)
+    for _,v in ipairs(model:GetDescendants()) do
+        if v:IsA("ProximityPrompt") then
+            return true
+        end
+        if v:IsA("BillboardGui") then
+            return true
+        end
+        if v:IsA("IntValue") or v:IsA("NumberValue") then
+            local n = v.Name:lower()
+            if n:find("price") or n:find("cost") then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- ✅ KIỂM TRA SLAP FREE
+local function isSlap(obj)
+    if obj:IsA("Model") then
+        local name = obj.Name:lower()
+        if name:find("slap") then
+
+            -- 🚫 BỎ QUA SLAP PHẢI MUA
+            if isPaidSlap(obj) then
+                return false
+            end
+
+            local part = getTouchPart(obj)
+            if part then
+                return true, part
+            end
+        end
+    end
+    return false
+end
+
+-- ================= GUI =================
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "AutoCollectSlapGui"
+
+local btn = Instance.new("TextButton", gui)
+btn.Size = UDim2.new(0,240,0,45)
+btn.Position = UDim2.new(0.05,0,0.52,0)
+btn.Text = "Auto Collect Slap : OFF"
+btn.BackgroundColor3 = Color3.fromRGB(200,60,60)
+btn.TextColor3 = Color3.new(1,1,1)
+btn.TextScaled = true
+btn.Active = true
+btn.Draggable = true
+
+-- ================= LOGIC =================
+btn.MouseButton1Click:Connect(function()
+    collecting = not collecting
+
+    if collecting then
+        btn.Text = "Auto Collect Slap : ON"
+        btn.BackgroundColor3 = Color3.fromRGB(60,200,60)
+
+        task.spawn(function()
+            local hrp = getHRP()
+            savedCFrame = hrp.CFrame
+            collected = {}
+
+            for _,obj in ipairs(workspace:GetDescendants()) do
+                if not collecting then break end
+
+                local ok, touchPart = isSlap(obj)
+                if ok and not collected[obj] then
+                    collected[obj] = true
+
+                    pcall(function()
+                        hrp.CFrame = touchPart.CFrame + Vector3.new(0,3,0)
+                        task.wait(0.15)
+                        firetouchinterest(hrp, touchPart, 0)
+                        firetouchinterest(hrp, touchPart, 1)
+                    end)
+
+                    task.wait(0.2)
+                end
+            end
+
+            -- 🔁 Quay lại vị trí ban đầu
+            if savedCFrame then
+                hrp.CFrame = savedCFrame
+            end
+
+            collecting = false
+            btn.Text = "Auto Collect Slap : OFF"
+            btn.BackgroundColor3 = Color3.fromRGB(200,60,60)
+        end)
+    end
+end)
