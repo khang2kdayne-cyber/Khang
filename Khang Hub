@@ -1,0 +1,69 @@
+--// KHANG MENU CIRCLE TOGGLE
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "KhangMenu"
+
+-- ===== MAIN CIRCLE MENU =====
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 180, 0, 180)
+Frame.Position = UDim2.new(0.05, 0, 0.3, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Frame.Active = true
+Frame.Draggable = true
+Frame.Visible = true
+
+-- Bo tròn 100%
+local Corner = Instance.new("UICorner", Frame)
+Corner.CornerRadius = UDim.new(1,0)
+
+-- Title
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1,0,0,40)
+Title.Position = UDim2.new(0,0,0.1,0)
+Title.BackgroundTransparency = 1
+Title.Text = "KHANG MENU"
+Title.TextColor3 = Color3.fromRGB(0,255,0)
+Title.TextScaled = true
+Title.Font = Enum.Font.GothamBold
+
+-- Close Button (tròn)
+local Close = Instance.new("TextButton", Frame)
+Close.Size = UDim2.new(0,40,0,40)
+Close.Position = UDim2.new(0.5,-20,0.65,0)
+Close.Text = "X"
+Close.TextScaled = true
+Close.BackgroundColor3 = Color3.fromRGB(170,0,0)
+Close.TextColor3 = Color3.new(1,1,1)
+Close.Font = Enum.Font.GothamBold
+
+local CloseCorner = Instance.new("UICorner", Close)
+CloseCorner.CornerRadius = UDim.new(1,0)
+
+-- ===== MINI OPEN BUTTON (TRÒN) =====
+local Open = Instance.new("TextButton", ScreenGui)
+Open.Size = UDim2.new(0,55,0,55)
+Open.Position = UDim2.new(0.02,0,0.4,0)
+Open.Text = "☰"
+Open.TextScaled = true
+Open.BackgroundColor3 = Color3.fromRGB(0,170,0)
+Open.TextColor3 = Color3.new(1,1,1)
+Open.Font = Enum.Font.GothamBold
+Open.Visible = false
+
+local OpenCorner = Instance.new("UICorner", Open)
+OpenCorner.CornerRadius = UDim.new(1,0)
+
+-- ===== LOGIC =====
+Close.MouseButton1Click:Connect(function()
+    Frame.Visible = false
+    Open.Visible = true
+end)
+
+Open.MouseButton1Click:Connect(function()
+    Frame.Visible = true
+    Open.Visible = false
+end)
