@@ -1,0 +1,137 @@
+--// DOORS CIRCLE MENU - By Khang
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "KhangDoorsMenu"
+
+-- Main Button (Toggle Menu)
+local mainBtn = Instance.new("ImageButton", gui)
+mainBtn.Size = UDim2.new(0,60,0,60)
+mainBtn.Position = UDim2.new(0.1,0,0.5,0)
+mainBtn.BackgroundColor3 = Color3.fromRGB(25,25,25)
+mainBtn.Image = "rbxassetid://3926305904"
+mainBtn.ImageRectOffset = Vector2.new(964,4)
+mainBtn.ImageRectSize = Vector2.new(36,36)
+mainBtn.AutoButtonColor = false
+Instance.new("UICorner", mainBtn).CornerRadius = UDim.new(1,0)
+
+-- Drag GUI
+do
+    local dragging, dragInput, dragStart, startPos
+    mainBtn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = mainBtn.Position
+        end
+    end)
+    mainBtn.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    mainBtn.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            mainBtn.Position = UDim2.new(
+                startPos.X.Scale, startPos.X.Offset + delta.X,
+                startPos.Y.Scale, startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
+-- Function tạo nút tròn
+local function createCircleButton(iconId, offset)
+    local btn = Instance.new("ImageButton", gui)
+    btn.Size = UDim2.new(0,50,0,50)
+    btn.Position = mainBtn.Position + offset
+    btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+    btn.Image = iconId
+    btn.Visible = false
+    btn.AutoButtonColor = false
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(1,0)
+    return btn
+end
+
+-- Buttons
+local FullBrightBtn = createCircleButton("rbxassetid://3926305904", UDim2.new(0,70,0,0))
+local DoorESPBtn   = createCircleButton("rbxassetid://3926305904", UDim2.new(0,-70,0,0))
+local EntityESPBtn = createCircleButton("rbxassetid://3926305904", UDim2.new(0,0,0,-70))
+
+-- Toggle Menu
+local opened = false
+mainBtn.MouseButton1Click:Connect(function()
+    opened = not opened
+    FullBrightBtn.Visible = opened
+    DoorESPBtn.Visible = opened
+    EntityESPBtn.Visible = opened
+end)
+
+-- =======================
+-- FUNCTIONS
+-- =======================
+
+-- 🌕 FULLBRIGHT
+local fullbright = false
+local old
+FullBrightBtn.MouseButton1Click:Connect(function()
+    fullbright = not fullbright
+    if fullbright then
+        old = {
+            game.Lighting.Brightness,
+            game.Lighting.ClockTime,
+            game.Lighting.FogEnd
+        }
+        game.Lighting.Brightness = 5
+        game.Lighting.ClockTime = 14
+        game.Lighting.FogEnd = 100000
+    else
+        game.Lighting.Brightness = old[1]
+        game.Lighting.ClockTime = old[2]
+        game.Lighting.FogEnd = old[3]
+    end
+end)
+
+-- 🚪 DOOR ESP
+local doorESP = false
+DoorESPBtn.MouseButton1Click:Connect(function()
+    doorESP = not doorESP
+    for _,v in pairs(workspace:GetDescendants()) do
+        if v.Name == "Door" and v:IsA("Model") then
+            if doorESP then
+                if not v:FindFirstChild("Highlight") then
+                    local h = Instance.new("Highlight", v)
+                    h.FillColor = Color3.fromRGB(0,255,0)
+                end
+            else
+                if v:FindFirstChild("Highlight") then
+                    v.Highlight:Destroy()
+                end
+            end
+        end
+    end
+end)
+
+-- 👻 ENTITY ESP
+local entityESP = false
+EntityESPBtn.MouseButton1Click:Connect(function()
+    entityESP = not entityESP
+    for _,v in pairs(workspace:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("RushNew") then
+            if entityESP then
+                if not v:FindFirstChild("Highlight") then
+                    local h = Instance.new("Highlight", v)
+                    h.FillColor = Color3.fromRGB(255,0,0)
+                end
+            else
+                if v:FindFirstChild("Highlight") then
+                    v.Highlight:Destroy()
+                end
+            end
+        end
+    end
+end)
