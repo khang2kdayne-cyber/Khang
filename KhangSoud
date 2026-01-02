@@ -1,0 +1,19 @@
+-- Local Music | Only You Hear
+local player = game.Players.LocalPlayer
+
+-- Tạo Sound
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://1846088038"
+sound.Volume = 2
+sound.Looped = true
+sound.Parent = player:WaitForChild("PlayerGui")
+
+-- Phát nhạc
+sound:Play()
+
+-- Thông báo
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Music",
+    Text = "Đang phát nhạc (chỉ bạn nghe)",
+    Duration = 3
+})
